@@ -111,7 +111,7 @@ send(Json, #s{poster=Poster, poster_init=Init}) ->
   Body     = to_body(Json, Boundary),
   R        = Poster(post, {?COVERALLS_URL, [], Type, Body}, [], []),
   {ok, {{_, ReturnCode, _} = Status, _, Message}} = R,
-  rebar_log:log(debug, "Status: ~p~nResponse:~n~p~n", [Status, Message]),
+  rebar_log:log(debug, "JSON: ~p~nStatus: ~p~nResponse:~n~p~n", [Json, Status, Message]),
   case ReturnCode of
     200      -> ok;
     ErrCode  -> throw({error, {ErrCode, Message}})
