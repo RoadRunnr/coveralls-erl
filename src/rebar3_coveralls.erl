@@ -157,7 +157,7 @@ do_coveralls(ConvertAndSend, Get, GetLocal, MaybeSkip, Task) ->
   end.
 
 git_trim(Str) ->
-  iolist_to_binary(rebar_string:trim(Str)).
+  re:replace(Str, "\\s+", "", [global, {return, binary}]).
 
 collect_git_info(Report) ->
   case rebar_utils:sh("git rev-parse --verify HEAD", [return_on_error]) of
