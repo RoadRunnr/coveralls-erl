@@ -176,7 +176,7 @@ collect_git_details(Id) ->
   collect_git_branch_details(#{head => Head#{id => Id}}).
 
 collect_git_branch_details(Git) ->
-  {ok, Branch} = rebar_utils:sh("git branch --show-current", []),
+  {ok, Branch} = rebar_utils:sh("git rev-parse --abbrev-ref HEAD", []),
   collect_git_remotes(Git#{branch => git_trim(Branch)}).
 
 collect_git_remotes(Git) ->
