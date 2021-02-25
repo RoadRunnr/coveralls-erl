@@ -168,18 +168,12 @@ collect_git_info(Report) ->
   end.
 
 collect_git_details(Id) ->
-  {ok, Details} = rebar_utils:sh("git cat-file -p HEAD", []),
-  case re:run(
-         Details, "\nauthor (.+?) <([^>]*)>.+\ncommitter (.+?) <([^>]*)>.+[\S\s]*?\n\n(.*)",
-         [{capture, all_but_first, binary}]) of
-    {match, Matches} when length(Matches) == 5 ->
-      Head = maps:from_list(
-               lists:zip(
-                 ['author_name', 'author_email', 'committer_name', 'committer_email', 'message'], Matches)),
-      collect_git_branch_details(#{head => Head#{id => Id}});
-    _ ->
-      #{}
-  end.
+  {ok, Details} = rebar_utils:sh("git show -s --pretty=format:'%aN%n%aE%n%cN%n%cE%n%s'", []),
+  Info = re:split(Details, "\n", [{return, binary}]),
+  Head = maps:from_list(
+           lists:zip(
+             ['author_name', 'author_email', 'committer_name', 'committer_email', 'message'], Info)),
+  collect_git_branch_details(#{head => Head#{id => Id}}).
 
 collect_git_branch_details(Git) ->
   {ok, Branch} = rebar_utils:sh("git branch --show-current", []),
